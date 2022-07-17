@@ -14,6 +14,7 @@
 
 find_package(cereal QUIET CONFIG)
 
+
 if (NOT TARGET cereal::cereal)
   find_path(CEREAL_INCLUDE_DIR cereal/cereal.hpp)
   mark_as_advanced(CEREAL_INCLUDE_DIR)
@@ -34,10 +35,21 @@ if (NOT TARGET cereal::cereal)
 
 endif()
 
+if (TARGET cereal::cereal)
+  get_target_property(cerealIncludes cereal::cereal INTERFACE_INCLUDE_DIRECTORIES)
+    if(NOT EXISTS ${cereal_includes}/cereal/cereal.hpp)
+      set_target_properties(
+      cereal::cereal PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "/usr/include"
+      )
+    endif()
+endif()
+
 target_compile_definitions(cereal::cereal
   INTERFACE
     CEREAL_THREAD_SAFE=1
     CEREAL_RAPIDJSON_NAMESPACE=fb_rapidjson
+    RAPIDJSON_NAMESPACE=fb_rapidjson
     CEREAL_RAPIDJSON_PARSE_DEFAULT_FLAGS=kParseFullPrecisionFlag|kParseNanAndInfFlag
     CEREAL_RAPIDJSON_WRITE_DEFAULT_FLAGS=kWriteNoFlags
 )
